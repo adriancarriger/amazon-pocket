@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+  app:
+    ports:
+      - '3050:3050'
+    command: bash -c "npm start"
+    build: ./
+    env_file: ./.env
+    volumes:
+      - ./:/src
+      - /src/node_modules
