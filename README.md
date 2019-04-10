@@ -1,8 +1,8 @@
 # Amazon + PocketSmith
 
-An experiment getting my Amazon transactions into [PocketSmith](http://pocketsmith.com).
+⚗️ An experiment in categorizing Amazon transactions.
 
-The original goal was to take Amazon's csv order data and match it up with actual transactions from PocketSmith. Now it also can categorize anything based on custom rules.
+The original goal was to take Amazon's csv order data and match it up with actual transactions from [PocketSmith](http://pocketsmith.com). Now it also can categorize anything based on custom rules.
 
 ## Usage
 
