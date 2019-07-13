@@ -120,7 +120,7 @@ export default class PocketService {
     formData[`transaction${prefix}[date]`] = format(parse(update.date), 'MMM D, YYYY');
 
     if (update.note) {
-      formData[`transaction${prefix}[note_attributes][body]`] = update.note;
+      formData[`transaction${prefix}[note]`] = update.note;
     }
 
     if (update.category_title) {
@@ -138,6 +138,7 @@ export default class PocketService {
       url: data.url,
       headers: {
         cookie: await this.cookie(),
+        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'x-csrf-token': await this.authToken(),
         'x-requested-with': 'XMLHttpRequest'
       },
