@@ -25,7 +25,10 @@ export default class AmazonService {
   }
 
   public async setupBrowser() {
-    this.browser = await puppeteer.launch({ headless: false, defaultViewport: null });
+    this.browser = await puppeteer.launch({
+      headless: false,
+      defaultViewport: null
+    });
     this.page = await this.browser.newPage();
   }
 
@@ -50,7 +53,11 @@ export default class AmazonService {
     });
 
     await this.page.select('#report-type', typeMap[type]);
-    await this.page.click('#report-yearToDate');
+    await this.page.select('#report-month-start', '1');
+    await this.page.select('#report-day-start', '1');
+    await this.page.select('#report-year-start', '2019');
+    await this.page.click('#report-use-today');
+
     await this.page.click('#report-confirm');
 
     console.log('Waiting for file to download');
@@ -62,7 +69,9 @@ export default class AmazonService {
     const { size } = await fs.stat(file);
 
     if (size === 0) {
-      throw new Error(`\n\n⚠️   ⚠️   File ${file} had zero bytes!   ⚠️   ⚠️\n\n`);
+      throw new Error(
+        `\n\n⚠️   ⚠️   File ${file} had zero bytes!   ⚠️   ⚠️\n\n`
+      );
     }
 
     console.log('Copying file');
