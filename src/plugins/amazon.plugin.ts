@@ -78,7 +78,7 @@ export class AmazonPlugin {
   }
 
   public needsUpdate(row) {
-    if (row.note || row.original_payee.toLowerCase().match(/Amazon|amzn/) === null) {
+    if (row.note || row.original_payee.toLowerCase().match(/Amazon|amzn/gi) === null) {
       return;
     }
 
