@@ -1,6 +1,11 @@
+import * as fs from 'fs-extra';
+
 import PocketService from './pocket.service';
 import RulesEngine from './rules.engine';
 import getPlugins from './plugins';
+
+const useLocalData = false;
+const transactionsCache = './data/pocket-transactions.json';
 
 const pocket = new PocketService();
 
@@ -9,17 +14,33 @@ const pocket = new PocketService();
 
   console.log('Starting update 🤖');
 
-  await pocket.setupBrowser();
-  await pocket.login();
-  const transactions = await pocket.getTransactions();
+  if (!useLocalData) {
+    await pocket.setupBrowser();
+    await pocket.login();
+  }
+
+  const transactions = await getTransactions();
+
+  if (!useLocalData) {
+    await fs.writeJSON(transactionsCache, transactions);
+  }
+
   const updates = await rules.apply(transactions);
 
-  await pocket.sendUpdates(updates);
-  await pocket.closeBrowser();
+  if (!useLocalData) {
+    await pocket.sendUpdates(updates);
+    await pocket.closeBrowser();
+  }
 
   console.log('Update complete 🙂');
 })().catch(error => {
   console.error(error);
 
-  return pocket.closeBrowser();
+  if (!useLocalData) {
+    return pocket.closeBrowser();
+  }
 });
+
+async function getTransactions() {
+  return useLocalData ? fs.readJson(transactionsCache) : pocket.getTransactions();
+}
