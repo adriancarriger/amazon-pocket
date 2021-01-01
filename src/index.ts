@@ -4,7 +4,7 @@ import PocketService from './pocket.service';
 import RulesEngine from './rules.engine';
 import getPlugins from './plugins';
 
-const useLocalData = false;
+const useLocalData = true;
 const transactionsCache = './data/pocket-transactions.json';
 
 const pocket = new PocketService();
@@ -26,6 +26,7 @@ const pocket = new PocketService();
   }
 
   const updates = await rules.apply(transactions);
+  console.log('total', updates.length);
 
   if (!useLocalData) {
     await pocket.sendUpdates(updates);
