@@ -1,3 +1,4 @@
+import { Row } from '../rules.engine';
 import { SimplePlugin } from '../simple.plugin';
 import { addTag } from '../mutation-functions';
 
@@ -9,7 +10,7 @@ export class LabelPlugin extends SimplePlugin {
     this.prepareRules();
   }
 
-  public updateRow(row, newValues) {
+  public updateRow(row: Row, newValues: string[]) {
     newValues.forEach((newValue) => addTag(row, newValue));
   }
 }

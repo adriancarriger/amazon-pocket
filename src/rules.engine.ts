@@ -1,10 +1,36 @@
 import { addTag } from './mutation-functions';
 
-export default class RulesEngine {
-  constructor(private plugins = []) {}
+export interface Row {
+  id: number;
+  sharedPluginData?: { parsedDate?: Date; split?: boolean; amazonCateogry?: string };
+  splitItems: Row[];
+  tags: string[];
+  note: string;
+  payee: string;
+  date: string;
+  amount: number;
+  original_payee: string;
+  category_title: string;
+}
 
-  public async apply(rows) {
-    const updates = [];
+export interface Rule {
+  newValue?: string;
+  refs?: string[];
+  name?: string;
+  category?: string;
+  label?: string[];
+  checks?: number[];
+  note?: string[];
+  custom?: (row: Row) => boolean;
+  payee?: string[];
+  original_payee?: string[];
+}
+
+export default class RulesEngine {
+  constructor(private plugins = [] as any[]) {}
+
+  public async apply(rows: Row[]) {
+    const updates: Row[] = [];
     rows.forEach((row) => {
       const rowCopy = JSON.stringify(row);
       let needsUpdate = false;

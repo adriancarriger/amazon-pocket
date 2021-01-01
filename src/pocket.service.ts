@@ -2,6 +2,8 @@ import * as puppeteer from 'puppeteer';
 import * as request from 'request';
 import { format, parse } from 'date-fns';
 
+import { Row } from './rules.engine';
+
 export default class PocketService {
   private page: puppeteer.Page;
   private browser: puppeteer.Browser;
@@ -59,7 +61,7 @@ export default class PocketService {
     this.page.setViewport({ width: 1000, height: 1200 });
   }
 
-  public async sendUpdates(updates) {
+  public async sendUpdates(updates: Row[]) {
     console.log('updateTransactions - Started');
 
     await this.page.goto('https://my.pocketsmith.com/transactions/search', {
@@ -78,7 +80,7 @@ export default class PocketService {
     console.log('updateTransactions - Complete');
   }
 
-  private async makeUpdate(update, delay = 0) {
+  private async makeUpdate(update: Row, delay = 0) {
     await this.wait(delay);
 
     const formData = {
@@ -114,7 +116,7 @@ export default class PocketService {
     console.log(`Update ID: ${update.id} completed with code ${response.statusCode}`);
   }
 
-  private addUpdateData(formData, update, prefix = '', amount?) {
+  private addUpdateData(formData: any, update: Row, prefix = '', amount?: string) {
     formData[`transaction${prefix}[tag_list]`] = update.tags.join(',');
     formData[`transaction${prefix}[payee]`] = update.payee;
     formData[`transaction${prefix}[date]`] = format(parse(update.date), 'MMM D, YYYY');
@@ -132,7 +134,7 @@ export default class PocketService {
     }
   }
 
-  private async pocketRequest(data): Promise<request.Response> {
+  private async pocketRequest(data: any): Promise<request.Response> {
     const requestData = {
       method: 'POST',
       url: data.url,
@@ -155,7 +157,7 @@ export default class PocketService {
 
       if (data.formParts) {
         const form = uploadRequest.form();
-        data.formParts.forEach((part) => {
+        data.formParts.forEach((part: any) => {
           Object.keys(part).forEach((key) => {
             form.append(key, part[key]);
           });
@@ -174,13 +176,13 @@ export default class PocketService {
     });
   }
 
-  private async wait(time) {
+  private async wait(time: number) {
     return new Promise((resolve) => {
       setTimeout(resolve, time);
     });
   }
 
-  private getAmount(updateItem) {
+  private getAmount(updateItem: Row) {
     return `${Math.abs(updateItem.amount).toFixed(2)}`;
   }
 }

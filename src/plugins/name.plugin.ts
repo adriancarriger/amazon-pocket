@@ -1,3 +1,4 @@
+import { Row } from '../rules.engine';
 import { SimplePlugin } from '../simple.plugin';
 
 export class NamePlugin extends SimplePlugin {
@@ -8,7 +9,7 @@ export class NamePlugin extends SimplePlugin {
     this.prepareRules();
   }
 
-  public updateRow(row, newValue) {
+  public updateRow(row: Row, newValue: string) {
     row.payee = newValue;
   }
 }

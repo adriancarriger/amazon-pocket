@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2017",
-    "noImplicitAny": false,
+    "target": "esnext",
+    "lib": ["DOM", "ESNext"],
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",

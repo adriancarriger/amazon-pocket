@@ -1,21 +1,23 @@
+import { Row, Rule } from './rules.engine';
+
 export abstract class SimplePlugin {
-  public name;
+  public name: string;
   public types = ['original_payee', 'payee', 'note', 'amount', 'custom'];
-  private rules = [];
+  private rules: Rule[] = [];
   private customMatchFunctionsMap = {
     amount: this.amountMatch,
     custom: this.customMatch,
   };
 
-  public needsUpdate(row) {
+  public needsUpdate(row: Row) {
     for (let ruleIndex = 0; ruleIndex < this.rules.length; ruleIndex++) {
       const rule = this.rules[ruleIndex];
       for (let typeIndex = 0; typeIndex < this.types.length; typeIndex++) {
         const matchType = this.types[typeIndex];
         if (matchType in rule) {
-          const ruleFunction = this.getRuleFunction(matchType);
+          const ruleFunction = this.getRuleFunction(matchType as any);
 
-          if (ruleFunction(row, matchType, rule[matchType])) {
+          if (ruleFunction(row, matchType, rule[matchType as keyof Rule])) {
             if (rule.newValue) {
               this.updateRow(row, rule.newValue);
             }
@@ -28,13 +30,15 @@ export abstract class SimplePlugin {
   }
 
   public prepareRules() {
-    const rules = require(`./rules/${this.name.toLowerCase()}.rules`).default;
+    const rules: Rule[] = require(`./rules/${this.name.toLowerCase()}.rules`).default;
     this.rules = rules.map((rule) => {
       const preparedRule = { ...rule };
 
       this.types.forEach((type) => {
         if (type in rule && !(type in this.customMatchFunctionsMap)) {
-          preparedRule[type] = rule[type].map((typeItem) => typeItem.toLowerCase());
+          (preparedRule as any)[type] = ((rule as any)[type] as string[]).map((typeItem) =>
+            typeItem.toLowerCase()
+          );
         }
       });
 
@@ -42,18 +46,18 @@ export abstract class SimplePlugin {
     });
   }
 
-  public updateRow(row, newValue) {}
+  public updateRow(row: Row, newValue: string | string[]) {}
 
-  private getRuleFunction(matchType) {
+  private getRuleFunction(matchType: keyof Row | 'custom' | 'amount') {
     return matchType in this.customMatchFunctionsMap
-      ? this.customMatchFunctionsMap[matchType]
+      ? (this.customMatchFunctionsMap as any)[matchType]
       : this.stringMatch;
   }
 
-  private stringMatch(row, matchType, matchOptions: string[]) {
-    const rowValue: string = row[matchType];
+  private stringMatch(row: Row, matchType: keyof Row, matchOptions: string[]) {
+    const rowValue = row[matchType];
 
-    if (!rowValue) {
+    if (!rowValue || typeof rowValue !== 'string') {
       return false;
     }
 
@@ -67,12 +71,11 @@ export abstract class SimplePlugin {
     }
   }
 
-  private amountMatch(row, matchType, matchAmount: number) {
-    const amount: string = row[matchType];
-    Number(amount) === matchAmount;
+  private amountMatch(row: Row, matchType: keyof Row, matchAmount: number) {
+    Number(row[matchType]) === matchAmount;
   }
 
-  private customMatch(row, _, matchFunction) {
-    return matchFunction(row);
+  private customMatch(row: Row, _: string, matchFunction: Rule['custom']) {
+    return matchFunction?.(row);
   }
 }

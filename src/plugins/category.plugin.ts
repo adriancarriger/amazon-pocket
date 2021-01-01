@@ -1,3 +1,4 @@
+import { Row } from '../rules.engine';
 import { SimplePlugin } from '../simple.plugin';
 
 export class CategoryPlugin extends SimplePlugin {
@@ -8,7 +9,7 @@ export class CategoryPlugin extends SimplePlugin {
     this.prepareRules();
   }
 
-  public updateRow(row, newValue) {
+  public updateRow(row: Row, newValue: string) {
     row.category_title = newValue;
   }
 }
