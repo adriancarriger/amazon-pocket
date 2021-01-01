@@ -22,10 +22,10 @@ export default class PocketService {
   public async getTransactions() {
     console.log('getTransactions - Started');
     await this.page.goto('https://my.pocketsmith.com/transactions/search', {
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
     });
 
-    const today = format(parse(new Date()), 'MMM D, YYYY');
+    const today = format(new Date(), 'MMM D, yyyy');
 
     const response = await this.pocketRequest({
       url: 'https://my.pocketsmith.com/transactions/query.json',
@@ -40,8 +40,8 @@ export default class PocketService {
         'sort[col]': 'date',
         'sort[dir]': 'desc',
         include_totals: '1',
-        summary: '1'
-      }
+        summary: '1',
+      },
     });
 
     console.log('getTransactions - Done!');
@@ -63,13 +63,13 @@ export default class PocketService {
     console.log('updateTransactions - Started');
 
     await this.page.goto('https://my.pocketsmith.com/transactions/search', {
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
     });
 
     let delay = 0;
 
     await Promise.all(
-      updates.map(update => {
+      updates.map((update) => {
         delay += 500;
         return this.makeUpdate(update, delay);
       })
@@ -90,7 +90,7 @@ export default class PocketService {
       include_totals: '1',
       summary: '1',
       update: '1',
-      id: update.id
+      id: update.id,
     };
 
     if (update.splitItems) {
@@ -109,7 +109,7 @@ export default class PocketService {
 
     const response = await this.pocketRequest({
       url: 'https://my.pocketsmith.com/transactions/query.json',
-      formData
+      formData,
     });
     console.log(`Update ID: ${update.id} completed with code ${response.statusCode}`);
   }
@@ -117,7 +117,12 @@ export default class PocketService {
   private addUpdateData(formData, update, prefix = '', amount?) {
     formData[`transaction${prefix}[tag_list]`] = update.tags.join(',');
     formData[`transaction${prefix}[payee]`] = update.payee;
-    formData[`transaction${prefix}[date]`] = format(parse(update.date), 'MMM D, YYYY');
+    formData[`transaction${prefix}[date]`] = format(
+      parse(update.date, 'yyyy-MM-dd', new Date()),
+      'MMM D, yyyy'
+    );
+
+    console.log('the test', formData[`transaction${prefix}[date]`]);
 
     if (update.note) {
       formData[`transaction${prefix}[note]`] = update.note;
@@ -140,9 +145,9 @@ export default class PocketService {
         cookie: await this.cookie(),
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'x-csrf-token': await this.authToken(),
-        'x-requested-with': 'XMLHttpRequest'
+        'x-requested-with': 'XMLHttpRequest',
       },
-      formData: { ...data.formData }
+      formData: { ...data.formData },
     };
 
     return new Promise((resolve, reject) => {
@@ -155,8 +160,8 @@ export default class PocketService {
 
       if (data.formParts) {
         const form = uploadRequest.form();
-        data.formParts.forEach(part => {
-          Object.keys(part).forEach(key => {
+        data.formParts.forEach((part) => {
+          Object.keys(part).forEach((key) => {
             form.append(key, part[key]);
           });
         });
@@ -175,7 +180,7 @@ export default class PocketService {
   }
 
   private async wait(time) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(resolve, time);
     });
   }

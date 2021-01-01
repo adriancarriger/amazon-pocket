@@ -1,13 +1,16 @@
+import { Row } from './rules.engine';
+
 export abstract class SimplePlugin {
-  public name;
+  public name: string;
   public types = ['original_payee', 'payee', 'note', 'amount', 'custom'];
   private rules = [];
+
   private customMatchFunctionsMap = {
     amount: this.amountMatch,
-    custom: this.customMatch
+    custom: this.customMatch,
   };
 
-  public needsUpdate(row) {
+  public needsUpdate(row: Row) {
     for (let ruleIndex = 0; ruleIndex < this.rules.length; ruleIndex++) {
       const rule = this.rules[ruleIndex];
       for (let typeIndex = 0; typeIndex < this.types.length; typeIndex++) {
@@ -28,13 +31,14 @@ export abstract class SimplePlugin {
   }
 
   public prepareRules() {
+    //
     const rules = require(`./rules/${this.name.toLowerCase()}.rules`).default;
-    this.rules = rules.map(rule => {
+    this.rules = rules.map((rule) => {
       const preparedRule = { ...rule };
 
-      this.types.forEach(type => {
+      this.types.forEach((type) => {
         if (type in rule && !(type in this.customMatchFunctionsMap)) {
-          preparedRule[type] = rule[type].map(typeItem => typeItem.toLowerCase());
+          preparedRule[type] = rule[type].map((typeItem) => typeItem.toLowerCase());
         }
       });
 
@@ -42,7 +46,7 @@ export abstract class SimplePlugin {
     });
   }
 
-  public updateRow(row, newValue) {}
+  public updateRow(row: Row, newValue) {}
 
   private getRuleFunction(matchType) {
     return matchType in this.customMatchFunctionsMap
@@ -67,7 +71,7 @@ export abstract class SimplePlugin {
     }
   }
 
-  private amountMatch(row, matchType, matchAmount: number) {
+  private amountMatch(row: Row, matchType, matchAmount: number) {
     const amount: string = row[matchType];
     Number(amount) === matchAmount;
   }

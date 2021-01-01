@@ -4,7 +4,7 @@ import PocketService from './pocket.service';
 import RulesEngine from './rules.engine';
 import getPlugins from './plugins';
 
-const useLocalData = false;
+const useLocalData = true; // temp
 const transactionsCache = './data/pocket-transactions.json';
 
 const pocket = new PocketService();
@@ -33,7 +33,7 @@ const pocket = new PocketService();
   }
 
   console.log('Update complete 🙂');
-})().catch(error => {
+})().catch((error) => {
   console.error(error);
 
   if (!useLocalData) {
