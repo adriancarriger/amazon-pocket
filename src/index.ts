@@ -33,7 +33,7 @@ const pocket = new PocketService();
   }
 
   console.log('Update complete 🙂');
-})().catch(error => {
+})().catch((error) => {
   console.error(error);
 
   if (!useLocalData) {

@@ -1,6 +1,6 @@
 export default [
   {
     original_payee: ['ITUNES'],
-    newValue: ['iTunes']
-  }
+    newValue: ['iTunes'],
+  },
 ];

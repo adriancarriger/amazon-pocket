@@ -9,10 +9,10 @@ export default [
       }
 
       return needsUpdate;
-    }
+    },
   },
   {
     original_payee: ['ITUNES'],
-    newValue: 'Entertainment'
-  }
+    newValue: 'Entertainment',
+  },
 ];

@@ -10,7 +10,7 @@ export default class AmazonService {
   public async login() {
     const { AMAZON_USERNAME, AMAZON_PASSWORD } = this.getAmazonCredentials();
     await this.page.goto('https://www.amazon.com/gp/b2b/reports', {
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
     });
     await this.page.keyboard.type(AMAZON_USERNAME);
     await this.page.keyboard.press('Enter');
@@ -27,7 +27,7 @@ export default class AmazonService {
   public async setupBrowser() {
     this.browser = await puppeteer.launch({
       headless: false,
-      defaultViewport: null
+      defaultViewport: null,
     });
     this.page = await this.browser.newPage();
   }
@@ -36,7 +36,7 @@ export default class AmazonService {
     const typeMap = {
       items: 'ITEMS',
       orders: 'SHIPMENTS',
-      refunds: 'REFUNDS'
+      refunds: 'REFUNDS',
     };
     const directory = `./temp/${type}`;
 
@@ -49,7 +49,7 @@ export default class AmazonService {
 
     await (this.page as any)._client.send('Page.setDownloadBehavior', {
       behavior: 'allow',
-      downloadPath: directory
+      downloadPath: directory,
     });
 
     await this.page.select('#report-type', typeMap[type]);
@@ -64,14 +64,12 @@ export default class AmazonService {
     const file = await this.getFileName(`./temp/${type}/*.csv`);
 
     // TODO: improve this
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const { size } = await fs.stat(file);
 
     if (size === 0) {
-      throw new Error(
-        `\n\n⚠️   ⚠️   File ${file} had zero bytes!   ⚠️   ⚠️\n\n`
-      );
+      throw new Error(`\n\n⚠️   ⚠️   File ${file} had zero bytes!   ⚠️   ⚠️\n\n`);
     }
 
     console.log('Copying file');
@@ -93,12 +91,16 @@ export default class AmazonService {
     return { AMAZON_USERNAME, AMAZON_PASSWORD };
   }
 
-  private async getFileName(globPattern, maxWait = 30000, waitInterval = 1000) {
+  private async getFileName(
+    globPattern,
+    maxWait = 30000,
+    waitInterval = 1000
+  ): Promise<string | undefined> {
     let totalWait = 0;
     return new Promise((resolve, reject) => {
       const interval = setInterval(async () => {
         totalWait += waitInterval;
-        const files = await globby(globPattern);
+        const files: string[] = await globby(globPattern);
 
         if (files.length === 1) {
           clearInterval(interval);

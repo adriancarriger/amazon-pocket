@@ -4,7 +4,7 @@ export abstract class SimplePlugin {
   private rules = [];
   private customMatchFunctionsMap = {
     amount: this.amountMatch,
-    custom: this.customMatch
+    custom: this.customMatch,
   };
 
   public needsUpdate(row) {
@@ -29,12 +29,12 @@ export abstract class SimplePlugin {
 
   public prepareRules() {
     const rules = require(`./rules/${this.name.toLowerCase()}.rules`).default;
-    this.rules = rules.map(rule => {
+    this.rules = rules.map((rule) => {
       const preparedRule = { ...rule };
 
-      this.types.forEach(type => {
+      this.types.forEach((type) => {
         if (type in rule && !(type in this.customMatchFunctionsMap)) {
-          preparedRule[type] = rule[type].map(typeItem => typeItem.toLowerCase());
+          preparedRule[type] = rule[type].map((typeItem) => typeItem.toLowerCase());
         }
       });
 

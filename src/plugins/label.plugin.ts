@@ -10,6 +10,6 @@ export class LabelPlugin extends SimplePlugin {
   }
 
   public updateRow(row, newValues) {
-    newValues.forEach(newValue => addTag(row, newValue));
+    newValues.forEach((newValue) => addTag(row, newValue));
   }
 }

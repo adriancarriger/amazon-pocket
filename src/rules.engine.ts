@@ -5,7 +5,7 @@ export default class RulesEngine {
 
   public async apply(rows) {
     const updates = [];
-    rows.forEach(row => {
+    rows.forEach((row) => {
       const rowCopy = JSON.stringify(row);
       let needsUpdate = false;
       row.sharedPluginData = {};
@@ -14,8 +14,8 @@ export default class RulesEngine {
         row.tags = [];
       }
 
-      this.plugins.forEach(plugin => {
-        (row.splitItems || [row]).forEach(splitItem => {
+      this.plugins.forEach((plugin) => {
+        (row.splitItems || [row]).forEach((splitItem) => {
           if (plugin.needsUpdate(splitItem)) {
             needsUpdate = true;
           }

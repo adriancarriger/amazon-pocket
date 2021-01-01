@@ -24,7 +24,7 @@ export class AmazonPlugin {
       previous[id].push({
         ...current,
         total: this.extractAmount(current['Item Total']),
-        date: parse(current['Order Date'])
+        date: parse(current['Order Date']),
       });
 
       return previous;
@@ -50,7 +50,7 @@ export class AmazonPlugin {
       this.orderTotals[orderId] = {
         itemsTotal,
         charged: orderTotal,
-        diffInCents: this.cents(orderTotal) - this.cents(itemsTotal)
+        diffInCents: this.cents(orderTotal) - this.cents(itemsTotal),
       };
       if (this.orderTotals[orderId].diffInCents !== 0) {
         this.spreadOrderDiff(orderId);
@@ -100,7 +100,7 @@ export class AmazonPlugin {
         row.sharedPluginData.split = true;
         const rowCopy = JSON.parse(JSON.stringify(row));
         row.splitItems = [];
-        this.amazonItems[orderId].forEach(orderItem => {
+        this.amazonItems[orderId].forEach((orderItem) => {
           const rowItem = JSON.parse(JSON.stringify(rowCopy));
           this.createPurchaseUpdate(rowItem, orderItem, orderId);
           row.splitItems.push(rowItem);
@@ -116,7 +116,7 @@ export class AmazonPlugin {
       const possibleGiftCards = this.findPossibleGiftCards(row);
 
       if (possibleGiftCards.length) {
-        const links = possibleGiftCards.map(id => `• ${this.orderLink(id)}`).join('\n');
+        const links = possibleGiftCards.map((id) => `• ${this.orderLink(id)}`).join('\n');
 
         row.note = `This purchase may involve an Amazon gift card.\n\nPossible orders:\n${links}`;
         addTag(row, 'PossibleGiftCard');
@@ -191,7 +191,7 @@ export class AmazonPlugin {
   }
 
   private getPossibleMatches(priceKey, input) {
-    return (this.amazonOrders[priceKey] || []).filter(orderId =>
+    return (this.amazonOrders[priceKey] || []).filter((orderId) =>
       this.nearbyDate(this.amazonItems[orderId][0].date, input)
     );
   }
