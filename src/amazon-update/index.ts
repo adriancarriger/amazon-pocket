@@ -10,7 +10,7 @@ import AmazonService from './amazon.service';
   console.log('Update complete 🙂');
 })().catch(console.error);
 
-async function downloadType(type) {
+async function downloadType(type: 'items' | 'orders' | 'refunds') {
   const amazon = new AmazonService();
   await amazon.setupBrowser();
   await amazon.login();

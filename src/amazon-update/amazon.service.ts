@@ -63,6 +63,10 @@ export default class AmazonService {
     console.log('Waiting for file to download');
     const file = await this.getFileName(`./temp/${type}/*.csv`);
 
+    if (file === undefined) {
+      return;
+    }
+
     // TODO: improve this
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -92,7 +96,7 @@ export default class AmazonService {
   }
 
   private async getFileName(
-    globPattern,
+    globPattern: string,
     maxWait = 30000,
     waitInterval = 1000
   ): Promise<string | undefined> {
