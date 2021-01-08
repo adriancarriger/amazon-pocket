@@ -40,6 +40,10 @@ export default class RulesEngine {
         row.tags = [];
       }
 
+      if (row.tags.includes('ManualAdjustment')) {
+        return;
+      }
+
       this.plugins.forEach((plugin) => {
         (row.splitItems || [row]).forEach((splitItem) => {
           if (plugin.needsUpdate(splitItem)) {
