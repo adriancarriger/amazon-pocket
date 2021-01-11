@@ -23,7 +23,7 @@ export default class PocketService {
 
   public async getTransactions() {
     console.log('getTransactions - Started');
-    await this.page.goto('https://my.pocketsmith.com/transactions/search', {
+    await this.page.goto('https://my.pocketsmith.com/transactions', {
       waitUntil: 'networkidle0',
     });
 
@@ -64,7 +64,7 @@ export default class PocketService {
   public async sendUpdates(updates: Row[]) {
     console.log('updateTransactions - Started');
 
-    await this.page.goto('https://my.pocketsmith.com/transactions/search', {
+    await this.page.goto('https://my.pocketsmith.com/transactions', {
       waitUntil: 'networkidle0',
     });
 
