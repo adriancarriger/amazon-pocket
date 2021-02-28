@@ -97,7 +97,7 @@ export default class AmazonService {
 
   private async getFileName(
     globPattern: string,
-    maxWait = 30000,
+    maxWait = 90000,
     waitInterval = 1000
   ): Promise<string | undefined> {
     let totalWait = 0;

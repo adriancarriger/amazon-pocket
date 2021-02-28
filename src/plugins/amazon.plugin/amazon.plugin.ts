@@ -109,7 +109,8 @@ export class AmazonPlugin {
       };
 
       if (this.orderTotals[orderId].diffInCents !== 0) {
-        this.spreadOrderDiff(orderId);
+        // this.spreadOrderDiff(orderId);
+        return;
       }
 
       if (orderGroup.length === 1) {
@@ -187,18 +188,18 @@ export class AmazonPlugin {
         });
 
         if (combo) {
-          row.sharedPluginData.split = true;
-          const rowCopy: Row = JSON.parse(JSON.stringify(row));
-          row.splitItems = [];
-          combo.forEach((orderItem) => {
-            /**
-             * TODO
-             * should probably mark each item as taken - so the same one doesn't get used twice
-             */
-            const rowItem: Row = JSON.parse(JSON.stringify(rowCopy));
-            this.createPurchaseUpdate(rowItem, orderItem, orderId);
-            row.splitItems.push(rowItem);
-          });
+          // row.sharedPluginData.split = true;
+          // const rowCopy: Row = JSON.parse(JSON.stringify(row));
+          // row.splitItems = [];
+          // combo.forEach((orderItem) => {
+          //   /**
+          //    * TODO
+          //    * should probably mark each item as taken - so the same one doesn't get used twice
+          //    */
+          //   const rowItem: Row = JSON.parse(JSON.stringify(rowCopy));
+          //   this.createPurchaseUpdate(rowItem, orderItem, orderId);
+          //   row.splitItems.push(rowItem);
+          // });
         } else {
           row.note = `This purchase could not be sorted.\n\n${this.orderLink(orderId)}`;
           addTag(row, 'RequiresAHuman');
@@ -273,7 +274,7 @@ export class AmazonPlugin {
     }
 
     if (row.amount !== itemAmount) {
-      row.amount = itemAmount;
+      // row.amount = itemAmount;
     }
 
     if ('originalPrice' in item && item.originalPrice) {
@@ -366,20 +367,20 @@ export class AmazonPlugin {
     return items.reduce((total, item) => total + this.extractAmount(item['Total Charged']), 0);
   }
 
-  private spreadOrderDiff(orderId: string) {
-    const spreadItems = this.amazonItems[orderId].length;
-    const remainderInCents = this.orderTotals[orderId].diffInCents % spreadItems;
-    const spreadTotalInCents = this.orderTotals[orderId].diffInCents - remainderInCents;
-    const spreadInCents = spreadTotalInCents / spreadItems;
+  // private spreadOrderDiff(orderId: string) {
+  //   const spreadItems = this.amazonItems[orderId].length;
+  //   const remainderInCents = this.orderTotals[orderId].diffInCents % spreadItems;
+  //   const spreadTotalInCents = this.orderTotals[orderId].diffInCents - remainderInCents;
+  //   const spreadInCents = spreadTotalInCents / spreadItems;
 
-    this.amazonItems[orderId].forEach((item, index) => {
-      const updateAmountInCents = spreadInCents + (index === 0 ? remainderInCents : 0);
-      const amount = this.cents(this.extractAmount(item['Item Total']));
-      const amountInCents = updateAmountInCents + amount;
-      item.originalPrice = item['Item Total'];
-      item['Item Total'] = `$${(amountInCents / 100).toFixed(2)}`;
-    });
-  }
+  //   this.amazonItems[orderId].forEach((item, index) => {
+  //     const updateAmountInCents = spreadInCents + (index === 0 ? remainderInCents : 0);
+  //     const amount = this.cents(this.extractAmount(item['Item Total']));
+  //     const amountInCents = updateAmountInCents + amount;
+  //     item.originalPrice = item['Item Total'];
+  //     item['Item Total'] = `$${(amountInCents / 100).toFixed(2)}`;
+  //   });
+  // }
 
   private extractAmount(input: string): number {
     return Number(input.slice(1));
